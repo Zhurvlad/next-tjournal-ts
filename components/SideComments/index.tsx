@@ -2,83 +2,29 @@ import React from 'react';
 import ArrowRightIcon from '@material-ui/icons/NavigateNextOutlined';
 
 import styles from './SideComments.module.scss';
+import {CommentItem} from "./CommentItem";
+import {comments} from '../../data'
+import clsx from "clsx";
 
-export const comments = [
-  {
-    id: 1,
-    user: {
-      fullname: 'Вася Пупкин',
-      avatarUrl: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Faloware.com%2F&psig=AOvVaw38ALzrL7_OSEfLxfR9EEqH&ust=1667080094964000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCJDIjbrzg_sCFQAAAAAdAAAAABAD'
-    },
-    text: 'Теперь, каждое рабочее утро, после кровати, я перекладываюсь туда спать ещё на часок. Ну и…',
-    post: {
-      title: 'Какая у вас дома ванна?',
-    },
-    createdAt: new Date().toString(),
 
-  },
-  {
-    id: 2,
-    user: {
-      fullname: 'Вася Пупкин',
-      avatarUrl: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Faloware.com%2F&psig=AOvVaw38ALzrL7_OSEfLxfR9EEqH&ust=1667080094964000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCJDIjbrzg_sCFQAAAAAdAAAAABAD'
-    },
-    text: 'Теперь, каждое рабочее утро, после кровати, я перекладываюсь туда спать ещё на часок. Ну и…',
-    post: {
-      title: 'Какая у вас дома ванна?',
-    },
-    createdAt: new Date().toString(),
-  },
-  {
-    id: 3,
-    user: {
-      fullname: 'Вася Пупкин',
-      avatarUrl: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Faloware.com%2F&psig=AOvVaw38ALzrL7_OSEfLxfR9EEqH&ust=1667080094964000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCJDIjbrzg_sCFQAAAAAdAAAAABAD'
-    },
-    text: 'Теперь, каждое рабочее утро, после кровати, я перекладываюсь туда спать ещё на часок. Ну и…',
-    post: {
-      title: 'Какая у вас дома ванна?',
-    },
-    createdAt: new Date().toString(),
-  },
-];
 
-interface CommentItemProps {
-  user: {
-    fullname: string;
-  };
-  text: string;
-  post: {
-    title: string;
-  };
-}
-
-const CommentItem: React.FC<CommentItemProps> = ({ user, text, post }) => {
-  return (
-    <div className={styles.commentItem}>
-      <div className={styles.userInfo}>
-        <img src="https://leonardo.osnova.io/598fc957-a3f6-598c-b6f9-a033c3941d12/-/scale_crop/64x64/-/format/webp/" />
-        <a href="#">
-          <b>{user.fullname}</b>
-        </a>
-      </div>
-      <p className={styles.text}>{text}</p>
-      <a href="#">
-        <span className={styles.postTitle}>{post.title}</span>
-      </a>
-    </div>
-  );
-};
 
 export const SideComments = () => {
-  return (
-    <div className={styles.root}>
-      <h3>
-        Комментарии <ArrowRightIcon />
-      </h3>
-      {comments.map((obj) => (
-        <CommentItem {...obj} key={obj.id} />
-      ))}
-    </div>
-  );
+
+    const [hideComments, setHideComments] = React.useState(true)
+
+    const toggleVisibleComments = () => {
+        setHideComments(!hideComments)
+    }
+
+    return (
+        <div className={clsx(styles.root, !hideComments && styles.rotated)}>
+            <h3 onClick={toggleVisibleComments}>
+                Комментарии <ArrowRightIcon/>
+            </h3>
+            {hideComments &&  comments.popular.map((obj) => (
+                <CommentItem {...obj} key={obj.id}/>
+            ))}
+        </div>
+    );
 };
