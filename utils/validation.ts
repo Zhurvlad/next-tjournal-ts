@@ -8,5 +8,5 @@ export const LoginSchema = yup.object().shape({
 
 
 export const RegisterSchema = yup.object().shape({
-    nickname: yup.string().min(6, "Слишком короткий пароль").required("Это поле обязательное")
+    fullName: yup.string().min(6, "Слишком короткий пароль").required("Это поле обязательное")
 }).concat(LoginSchema)

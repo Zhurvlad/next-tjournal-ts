@@ -3,7 +3,7 @@ import {TextField} from "@material-ui/core";
 import {useFormContext} from "react-hook-form";
 
 interface FormFieldProps {
-    textFieldName: "email" | 'password' | 'nickname',
+    textFieldName: "email" | 'password' | 'fullName',
     label: string
 }
 
