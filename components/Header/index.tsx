@@ -1,10 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  Paper,
-  Button,
-  IconButton,
-  Avatar,
+    Paper,
+    Button,
+    IconButton,
+    Avatar,
 } from '@material-ui/core';
 import {
     SearchOutlined as SearchIcon,
@@ -16,9 +16,11 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 import styles from './Header.module.scss';
 import {AuthDialog} from "../AuthDialog";
+import {useAppSelector} from "../../redux/hooks";
+import {selectUserData} from "../../redux/slices/user";
 
 export const Header: React.FC = () => {
-
+    const userData = useAppSelector(selectUserData)
     const [open, setOpen] = React.useState(false);
 
 
@@ -55,21 +57,25 @@ export const Header: React.FC = () => {
                 <IconButton>
                     <NotificationIcon/>
                 </IconButton>
-                {/*<Link href="/profile/1">*/}
-                {/*    <a className="d-flex align-center">*/}
-                {/*        <Avatar*/}
-                {/*            className={styles.avatar}*/}
-                {/*            alt="Remy Sharp"*/}
-                {/*            src="https://leonardo.osnova.io/5ffeac9a-a0e5-5be6-98af-659bfaabd2a6/-/scale_crop/108x108/-/format/webp/"*/}
-                {/*        />*/}
-                {/*        <ArrowBottom/>*/}
-                {/*    </a>*/}
-                {/*</Link>*/}
+                {
+                    userData
+                        ? <Link href="/profile/1">
+                            <a className="d-flex align-center">
+                                <Avatar
+                                    className={styles.avatar}
+                                    alt="Remy Sharp"
+                                    src="https://leonardo.osnova.io/5ffeac9a-a0e5-5be6-98af-659bfaabd2a6/-/scale_crop/108x108/-/format/webp/"
+                                />
+                                <ArrowBottom/>
+                            </a>
+                        </Link>
+                        : <div onClick={handleClickOpen} className={styles.loginButton}>
+                            <AccountCircleIcon/>
+                            Войти
+                        </div>
+                }
 
-                <div  onClick={handleClickOpen} className={styles.loginButton}>
-                    <AccountCircleIcon/>
-                    Войти
-                </div>
+
             </div>
             <AuthDialog setOpen={setOpen} open={open}/>
         </Paper>

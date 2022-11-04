@@ -8,6 +8,9 @@ import {CreateUserDto} from "../../../utils/api/types";
 import {UserApi} from "../../../utils/api";
 import {setCookie} from "nookies";
 import {Alert} from "@material-ui/lab";
+import { useAppDispatch } from '../../../redux/hooks';
+import {setUserData} from '../../../redux/slices/user'
+
 
 interface RegisterFormProps {
     onOpenLogin: (l: 'login') => void
@@ -15,6 +18,7 @@ interface RegisterFormProps {
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({onOpenLogin}) => {
     const [errorMessage, setErrorMessage] = React.useState('')
+    const dispatch = useAppDispatch()
 
 
     const form = useForm({
@@ -25,7 +29,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({onOpenLogin}) => {
     const onSubmit = async (dto:CreateUserDto) => {
         try {
             const data = await UserApi.register(dto)
-            console.log(data)
+            dispatch(setUserData(data))
             //Сохраняем JWT токен
             setCookie(null, 'TJAuthToken', data.token, {
                 maxAge: 30*24*60*60,

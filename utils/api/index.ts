@@ -1,5 +1,5 @@
 import axios from "axios";
-import {CreateUserDto, LoginDto, ResponceCreateUser} from "./types";
+import {CreateUserDto, LoginDto, ResponseCreateUser} from "./types";
 
 
 const instance = axios.create({
@@ -7,12 +7,12 @@ const instance = axios.create({
 })
 
 export const UserApi = {
-    async register(dto: CreateUserDto) : Promise<ResponceCreateUser> {
-        const {data} = await instance.post<CreateUserDto, {data: ResponceCreateUser}>('/auth/register', dto)
+    async register(dto: CreateUserDto) : Promise<ResponseCreateUser> {
+        const {data} = await instance.post<CreateUserDto, {data: ResponseCreateUser}>('/auth/register', dto)
         return data
     },
-    async login(dto: LoginDto) : Promise<ResponceCreateUser>{
-        const {data} = await instance.post<LoginDto,  {data: ResponceCreateUser}>('/auth/login', dto)
+    async login(dto: LoginDto) : Promise<ResponseCreateUser>{
+        const {data} = await instance.post<LoginDto,  {data: ResponseCreateUser}>('/auth/login', dto)
         return data
     }
 }
