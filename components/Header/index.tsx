@@ -28,6 +28,13 @@ export const Header: React.FC = () => {
         setOpen(true);
     };
 
+    //Закрываем окно после того как усер авторизовался
+    React.useEffect(() => {
+        if(open && userData) {
+            setOpen(false)
+        }
+    }, [open, userData])
+
     return (
         <Paper classes={{root: styles.root}} elevation={0}>
             <div className="d-flex align-center">
@@ -44,7 +51,7 @@ export const Header: React.FC = () => {
                     <input placeholder="Поиск"/>
                 </div>
 
-                <Link href={'/write'}>
+                <Link href={'/write/'}>
                     <Button variant="contained" className={styles.penButton}>
                         Новая запись
                     </Button>

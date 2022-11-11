@@ -1,28 +1,28 @@
+import {UserApi} from "./user";
+import {GetServerSidePropsContext, NextPageContext} from "next";
+import Cookies, {parseCookies} from "nookies";
 import axios from "axios";
-import {CreateUserDto, LoginDto, ResponseCreateUser} from "./types";
+import {PostApi} from "./post";
 
+export type ApiReturnType = {
+    user: ReturnType<typeof UserApi>
+    post: ReturnType<typeof PostApi>
+}
 
-const instance = axios.create({
-    baseURL: 'http://localhost:8888'
-})
+//Создали функцию которая отпределяет откуда доставать Cookies. Брать куки из контукста или брать из браузера
+export const Api = (ctx?: NextPageContext | GetServerSidePropsContext): ApiReturnType => {
+    const cookies = ctx ? Cookies.get(ctx) : parseCookies()
+    const token = cookies.TJAuthToken
 
-export const UserApi = {
-    async register(dto: CreateUserDto) : Promise<ResponseCreateUser> {
-        const {data} = await instance.post<CreateUserDto, {data: ResponseCreateUser}>('/auth/register', dto)
-        return data
-    },
-    async login(dto: LoginDto) : Promise<ResponseCreateUser>{
-        const {data} = await instance.post<LoginDto,  {data: ResponseCreateUser}>('/auth/login', dto)
-        return data
-    },
+    const instance = axios.create({
+        baseURL: 'http://localhost:8888/',
+        headers: {
+            Authorization: 'Bearer ' + token
+        }
+    })
 
-    async getMe(token: string) {
-        const {data} = await instance.get<ResponseCreateUser>('/users/me', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-        console.log(data)
-        return data
+    return {
+        user: UserApi(instance),
+        post: PostApi(instance)
     }
 }
