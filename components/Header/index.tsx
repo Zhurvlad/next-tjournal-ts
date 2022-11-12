@@ -5,6 +5,8 @@ import {
     Button,
     IconButton,
     Avatar,
+    List,
+    ListItem,
 } from '@material-ui/core';
 import {
     SearchOutlined as SearchIcon,
@@ -18,11 +20,14 @@ import styles from './Header.module.scss';
 import {AuthDialog} from "../AuthDialog";
 import {useAppSelector} from "../../redux/hooks";
 import {selectUserData} from "../../redux/slices/user";
+import {PostDto} from "../../utils/api/types";
+import {Api} from "../../utils/api";
 
 export const Header: React.FC = () => {
     const userData = useAppSelector(selectUserData)
     const [open, setOpen] = React.useState(false);
-
+    const [searchValue, setSearchValue] = React.useState('')
+    const [posts, setPosts] = React.useState<PostDto[]>([])
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -30,10 +35,23 @@ export const Header: React.FC = () => {
 
     //Закрываем окно после того как усер авторизовался
     React.useEffect(() => {
-        if(open && userData) {
+        if (open && userData) {
             setOpen(false)
         }
     }, [open, userData])
+
+    const handleChangeInput = async (e) => {
+        setSearchValue(e.target.value)
+        try {
+
+            const {items} = await Api().post.search({
+                title: (e.target.value)
+            })
+            setPosts(items)
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     return (
         <Paper classes={{root: styles.root}} elevation={0}>
@@ -48,7 +66,22 @@ export const Header: React.FC = () => {
 
                 <div className={styles.searchBlock}>
                     <SearchIcon/>
-                    <input placeholder="Поиск"/>
+                    <input value={searchValue} onChange={handleChangeInput} placeholder="Поиск"/>
+                    {posts.length > 0
+                    && <Paper className={styles.searchBlockPopup}>
+                        {posts.map(obj =>
+                            <List key={obj.id}>
+                                <Link href={`/news/${obj.id}`}>
+                                    <a>
+                                        <ListItem button>
+                                            {obj.title}
+                                        </ListItem>
+                                    </a>
+                                </Link>
+                            </List>
+                        )}
+                    </Paper>
+                    }
                 </div>
 
                 <Link href={'/write/'}>

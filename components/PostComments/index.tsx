@@ -3,26 +3,47 @@ import {Divider, Paper, Tab, Tabs, Typography} from "@material-ui/core";
 import {Comment} from "../Comment";
 import {AddCommentForm} from "../AddComentForm";
 import {comments} from '../../data'
+import {Api} from "../../utils/api";
+import {CommentDto} from "../../utils/api/types";
+import {useAppSelector} from "../../redux/hooks";
+import {selectUserData} from "../../redux/slices/user";
+import {useComments} from "../../hooks/useComments";
 
 type TComment = {
     text: string,
     id: number,
     createdAt: string,
     user: {
-        fullname: string,
+        fullName: string,
         avatarUrl: string
     }
 }
 
 interface PostCommentsProps {
-    items: TComment[]
+    items: TComment[],
+    postId: number
 }
 
-export const PostComments: React.FC = () => {
-
+export const PostComments: React.FC<PostCommentsProps> = ({postId}) => {
+    const userData = useAppSelector(selectUserData)
     const [activeSort, setActiveSort] = React.useState(0)
+    const [isCommentsLoading, setIsCommentsLoading] = React.useState(true)
 
-    const items = comments[activeSort !== 0 ? 'new' : 'popular' ]
+    const {comments, setComments} = useComments(postId)
+
+    /*const items = comments[activeSort !== 0 ? 'new' : 'popular' ]*/
+    /*const [comments, setComments] = React.useState<CommentDto[]>([])*/
+
+
+
+
+    const onAddComment = (obj: CommentDto) => {
+        setComments(prevState => [...prevState, obj])
+    }
+
+    const onRemoveComment = (id: number) => {
+        setComments(prevState => prevState.filter(obj => obj.id !== id))
+    }
 
     return (
         <Paper elevation={0} className="mt-40 p-30">
@@ -36,10 +57,17 @@ export const PostComments: React.FC = () => {
                     <Tab label="По порядку"/>
                 </Tabs>
                 <Divider/>
-                <AddCommentForm/>
+                {userData && <AddCommentForm addComments={onAddComment} postId={postId}/>}
                 <div className="mb-20"/>
 
-                {items.map(obj => <Comment key={obj.id} createdAt={obj.createdAt} text={obj.text} user={obj.user}/>)}
+                {comments.map(obj => <Comment key={obj.id}
+                                              onRemoveComment={onRemoveComment}
+                                              id={obj.id}
+                                              createdAt={obj.createdAt}
+                                              text={obj.text}
+                                              user={obj.user}
+                                              currentUserId={userData?.id}/>
+                                              )}
 
             </div>
         </Paper>

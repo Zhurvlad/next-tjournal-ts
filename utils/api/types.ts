@@ -15,6 +15,7 @@ export type ResponseCreateUser = {
     email: string,
     token: string,
     updatedAt: string
+    commentsCount?: number
 } & CreateUserDto
 
 export type PostDto = {
@@ -25,6 +26,15 @@ export type PostDto = {
     user: ResponseCreateUser
     id: number,
     views: number,
+    createdAt: string,
+    updatedAt: string
+}
+
+export type CommentDto = {
+    id: number,
+    post: PostDto,
+    user: ResponseCreateUser
+    text: string
     createdAt: string,
     updatedAt: string
 }

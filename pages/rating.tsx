@@ -12,8 +12,15 @@ import {
 
 import { MainLayout } from '../layouts/MainLayout';
 import { FollowButton } from '../components/FollowButton';
+import {GetServerSideProps, NextPage} from "next";
+import {Api} from "../utils/api";
+import { ResponseCreateUser } from '../utils/api/types';
 
-export default function Rating() {
+type RatingProps = {
+  user: ResponseCreateUser[]
+}
+
+const Rating:NextPage<RatingProps> = ({user}) => {
   return (
     <MainLayout>
       <Paper className="pl-20 pt-20 pr-20 mb-20" elevation={0}>
@@ -40,19 +47,42 @@ export default function Rating() {
               <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell component="th" scope="row">
-                <span className="mr-15">1</span>Вася Пупкин
-              </TableCell>
-              <TableCell align="right">540</TableCell>
-              <TableCell align="right">
-                <FollowButton />
-              </TableCell>
-            </TableRow>
-          </TableBody>
+          {user.map(user => (
+              <TableBody key={user.id}>
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    <span className="mr-15">{user.id}</span>{user.fullName}
+                  </TableCell>
+                  <TableCell align="right">{user.commentsCount * 5 }</TableCell>
+                  <TableCell align="right">
+                    <FollowButton />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+          ))}
         </Table>
       </Paper>
     </MainLayout>
   );
+}
+
+export default Rating
+
+
+export const getServerSideProps:GetServerSideProps = async ctx => {
+  try {
+    const user = await Api(ctx).user.getAll()
+    return {
+      props: {
+        user
+      }
+    }
+  } catch (e) {
+    console.log(e)
+  }
+  return {
+    props: {
+      posts: null
+    }
+  }
 }

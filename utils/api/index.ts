@@ -3,10 +3,12 @@ import {GetServerSidePropsContext, NextPageContext} from "next";
 import Cookies, {parseCookies} from "nookies";
 import axios from "axios";
 import {PostApi} from "./post";
+import {CommentApi} from "./comment";
 
 export type ApiReturnType = {
     user: ReturnType<typeof UserApi>
     post: ReturnType<typeof PostApi>
+    comment: ReturnType<typeof CommentApi>
 }
 
 //Создали функцию которая отпределяет откуда доставать Cookies. Брать куки из контукста или брать из браузера
@@ -23,6 +25,7 @@ export const Api = (ctx?: NextPageContext | GetServerSidePropsContext): ApiRetur
 
     return {
         user: UserApi(instance),
-        post: PostApi(instance)
+        post: PostApi(instance),
+        comment: CommentApi(instance)
     }
 }

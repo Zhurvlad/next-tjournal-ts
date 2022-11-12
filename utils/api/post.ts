@@ -7,6 +7,14 @@ type CreatePostDto = {
     body: OutputData['blocks'];
 }
 
+type SearchPostDto = {
+    title?: string;
+    body?: string;
+    views?: 'DESC' | 'ASC';
+    limit?: number;
+    take?: number;
+    tag?: string;
+}
 
 
 //Создаём функцию для запроса статей с БД
@@ -26,6 +34,10 @@ export const PostApi = (instance: AxiosInstance) => (
         },
         async update(id: number, dto: CreatePostDto) {
             const {data} = await instance.patch<CreatePostDto, {data: PostDto}>(`/posts/${id}`, dto)
+            return data
+        },
+        async search(query: SearchPostDto) {
+            const {data} = await instance.get<{items: PostDto[], total: number}>(`/posts/search`, {params: query})
             return data
         },
     }
